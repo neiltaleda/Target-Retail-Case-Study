@@ -27,7 +27,7 @@ Assuming you are a data analyst/ scientist at Target, you have been assigned the
 <b>What does 'good' look like?</b>
 
 ## <b>1. Import the dataset and do usual exploratory analysis steps like checking the structure & characteristics of the dataset:</b><br>
-1. Data type of all columns in the "customers" table.
+### 1. Data type of all columns in the "customers" table.
 ```sql
 select column_name, data_type
 from scaler-dsml-sql-459505.target.INFORMATION_SCHEMA.COLUMNS
@@ -36,7 +36,7 @@ where table_name = 'customers';
 <img width="397" height="193" alt="image" src="https://github.com/user-attachments/assets/1f1a17f5-0890-4974-9c59-9a8f084b28d6" />
 <br><br><br><br>
 
-2. Get the time range between which the orders were placed.
+### 2. Get the time range between which the orders were placed.
 ```sql
 select
   min(order_purchase_timestamp) as min_date,
@@ -49,7 +49,7 @@ from scaler-dsml-sql-459505.target.orders;
 All the orders are placed within a timeframe of 2 years- from 2016 to 2018
 Starting in September 2016 going upto October 2018 over a period of 772 days. <br><br><br><br>
 
-3. Count the Cities & States of customers who ordered during the given period.
+### 3. Count the Cities & States of customers who ordered during the given period.
 ```sql
 select
   count(distinct concat(customer_city, '-', customer_state)) as places
@@ -59,7 +59,7 @@ on c.customer_id = o.customer_id;
 ```
 
 ## <b>2. In-depth Exploration:</b><br>
-1. Is there a growing trend in the no. of orders placed over the past years?
+### 1. Is there a growing trend in the no. of orders placed over the past years?
 ```sql
 with final_table as
 (
@@ -79,7 +79,7 @@ order by final_table.order_year;
 **Insights**: Yes, there is a growing trend in the number of orders placed over the past years as you can see the number of orders increasing each year. This signifies that the company is doing well and has gained more popularity over the years.
 
 
-2. Can we see some kind of monthly seasonality in terms of the no. of orders being placed?
+### 2. Can we see some kind of monthly seasonality in terms of the no. of orders being placed?
 ```sql
 select
   extract(year from order_purchase_timestamp) as order_year,
@@ -93,7 +93,7 @@ limit 10;
 <img width="491" height="365" alt="image" src="https://github.com/user-attachments/assets/05a2f829-cb2b-420d-b2c2-c87a8cde5749" />
 
   
-3. During what time of the day, do the Brazilian customers mostly place their orders? (Dawn, Morning, Afternoon or Night)
+### 3. During what time of the day, do the Brazilian customers mostly place their orders? (Dawn, Morning, Afternoon or Night)
     * 0-6 hrs : Dawn
     * 7-12 hrs : Mornings
     * 13-18 hrs : Afternoon
