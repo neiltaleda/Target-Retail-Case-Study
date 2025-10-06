@@ -26,7 +26,7 @@ Assuming you are a data analyst/ scientist at Target, you have been assigned the
 
 <b>What does 'good' look like?</b>
 
-<b>1. Import the dataset and do usual exploratory analysis steps like checking the structure & characteristics of the dataset:</b><br>
+## <b>1. Import the dataset and do usual exploratory analysis steps like checking the structure & characteristics of the dataset:</b><br>
 1. Data type of all columns in the "customers" table.
 ```sql
 select column_name, data_type
@@ -58,7 +58,7 @@ join target.orders o
 on c.customer_id = o.customer_id;
 ```
 
-<b>2. In-depth Exploration:</b><br>
+## <b>2. In-depth Exploration:</b><br>
 1. Is there a growing trend in the no. of orders placed over the past years?
 ```sql
 with final_table as
@@ -127,4 +127,4 @@ limit 1
 **Insights:** Maximum orders are placed during hour 16, i.e during Afternoon 4 pm onwards. This is probably due to the fact that most corporate offices end at around 4 or 5 pm hence the large number of orders during that time frame.<br>
 **Recommendations:** Target can send targeted ads through its app and various other online ecommerce platforms for its products during these hours can help boost sales and revenue generation.
 
-<b>3. Evolution of E-commerce orders in the Brazil region:</b><br>
+## <b>3. Evolution of E-commerce orders in the Brazil region:</b><br>
