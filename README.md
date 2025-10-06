@@ -344,3 +344,47 @@ limit 5;
 These are the states where the order delivery is really fast as compared to the estimated date of delivery. <br>
 **Recommendations:** The company should focus on reducing the gap between estimated date of arrival and actual date of arrival to improve customer experience and also keep track of the products being sent.
 
+
+## <b>6. Analysis based on the payments:</b><br>
+### a. Find the month on month no. of orders placed using different payment types.
+```sql
+select
+  t.order_month,
+  t.payment_type,
+  count(t.order_id) as num_orders_placed
+from
+(
+select
+  o.order_id,
+  p.payment_type,
+  extract(month from order_purchase_timestamp) as order_month
+from target.orders o
+left join target.payments p
+on o.order_id = p.order_id
+) t
+group by t.order_month, t.payment_type
+order by order_month, payment_type
+```
+<img width="600" height="500" alt="image" src="https://github.com/user-attachments/assets/d472b102-045e-4174-ba6c-e74fbc82bb80" /> <br>
+<img width="600" height="500" alt="image" src="https://github.com/user-attachments/assets/aec9d97f-966e-4089-84a6-e1edb44a945d" />
+<img width="600" height="500" alt="image" src="https://github.com/user-attachments/assets/9efae19c-c6f6-4732-bcea-630e2524a214" />
+
+**Insights:** Most of the orders are placed using UPI and credit cards. <br>
+**Recommendations:** Make sure to keep a QR code and a credit card reader as these are the most widely used forms of payments.
+
+
+### b. Find the no. of orders placed on the basis of the payment installments that have been paid.
+```sql
+select
+  payment_installments,
+  count(order_id) as count_of_orders
+from target.payments
+group by payment_installments
+```
+
+<img width="600" height="500" alt="image" src="https://github.com/user-attachments/assets/4ec2da00-7193-4ff3-8e25-9014400d51e5" /> <br>
+<img width="600" height="500" alt="image" src="https://github.com/user-attachments/assets/e3f9cb9d-6f6b-4fcf-9d75-984d76840cd3" />
+
+**Insights:** Majority of the orders have 1 payment installment paid
+**Recommendations:** So we should ensure that people pay the remaining installments sooner and send out reminders accordingly.
+
