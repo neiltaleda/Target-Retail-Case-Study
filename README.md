@@ -158,3 +158,64 @@ order by num_of_customers
 
 **Insights:** RR has the least number of customers, while SP has the most number of customers, which indicates Target is doing a good amount of sales in SP. <br>
 **Recommendations:** Target can look into what is causing that to happen and provide attractive discount offers and prepare targeted marketing campaigns to boost revenue there.
+
+## <b>4. Impact on Economy: Analyze the money movement by e-commerce by looking at order prices, freight and others.</b><br>
+### a. Get the % increase in the cost of orders from year 2017 to 2018 (include months between Jan to Aug only). You can use the "payment_value" column in the payments table to get the cost of orders.
+```sql
+select
+  round(100*(sum(case when order_year = 2017 then total_payment end) / sum(case when order_year = 2018 then total_payment end)),3) as percent_increase
+from
+(
+select
+  t.order_year,
+  sum(t.payment_value) as total_payment
+from
+(
+select
+  *,
+  extract(year from order_purchase_timestamp) as order_year,
+  extract(month from order_purchase_timestamp) as order_month
+from target.orders o left join
+target.payments p on o.order_id = p.order_id
+) t
+where t.order_year in (2017, 2018) and t.order_month <= 8
+group by t.order_year
+) t1
+```
+
+<img width="397" height="193" alt="image" src="https://github.com/user-attachments/assets/689b95e3-240f-4b15-9376-ed20934d6f4a" />
+
+**Insights:** There has been an increase by 42.198% for the months of January to August from 2017 to 2018 which is a very good amount and indicates that the company is making a substantial amount of revenue and is improving over time.
+
+### b. Calculate the Total & Average value of order price for each state.
+```sql
+select
+  c.customer_state,
+  round(sum(oi.price),2) as per_state_total_price,
+  round(avg(oi.price), 2) as per_state_avg_price
+from target.customers c
+left join target.orders o on o.customer_id = c.customer_id
+left join target.order_items oi on oi.order_id = o.order_id
+group by c.customer_state
+```
+<img width="397" height="193" alt="image" src="https://github.com/user-attachments/assets/4c94723c-7b07-448b-98f1-6576e9c9cdf7" />
+
+**Insights:** SP has the maximum per state average price and as seen earlier(in Q3 part 2) it also has the maximum number of customers.
+
+### c. Calculate the Total & Average value of order freight for each state.
+```sql
+select
+  c.customer_state,
+  round(sum(oi.freight_value),2) as order_freight_sum,
+  round(avg(oi.freight_value),2) as order_freight_avg
+from target.customers c
+left join target.orders o on c.customer_id = o.customer_id
+left join target.order_items oi on oi.order_id = o.order_id
+group by c.customer_state;
+```
+<img width="397" height="193" alt="image" src="https://github.com/user-attachments/assets/d48a2b6e-caeb-4524-92c8-fb0a2cf34dbd" />
+
+**Insights:** Freight value, also known as freight rate or freight charge, refers to the cost associated with transporting goods from one location to another.
+SP has the lowest freight sum value while RR has the highest. SP also has the maximum per state average price therefore it yields high profits. <br>
+**Recommendations:** Try to reduce the freight value for AC.
+
