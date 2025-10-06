@@ -17,6 +17,8 @@ The data is available in 8 csv files: <br>
 * orders.csv
 * products.csv
 
+Find all the files at
+https://drive.google.com/drive/folders/1TGEc66YKbD443nslRi1bWgVd238gJCnb  <br>
 Dataset Schema: <br>
 <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/2442deb3-329c-4040-a359-29305e56364f" />
 
