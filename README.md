@@ -219,3 +219,128 @@ group by c.customer_state;
 SP has the lowest freight sum value while RR has the highest. SP also has the maximum per state average price therefore it yields high profits. <br>
 **Recommendations:** Try to reduce the freight value for AC.
 
+
+## <b>5. Analysis based on sales, freight and delivery time: </b><br>
+### a. Find the no. of days taken to deliver each order from the order’s purchase date as delivery time. Also, calculate the difference (in days) between the estimated & actual delivery date of an order. Do this in a single query.
+
+**You can calculate the delivery time and the difference between the estimated & actual delivery date using the given formula:
+time_to_deliver = order_delivered_customer_date - order_purchase_timestamp
+diff_estimated_delivery = order_delivered_customer_date - order_estimated_delivery_date**
+```sql
+select
+  order_id,
+  timestamp_diff(order_delivered_customer_date, order_purchase_timestamp, day) as time_to_deliver,
+  timestamp_diff(order_delivered_customer_date, order_estimated_delivery_date,day) as diff_estimated_delivery
+from target.orders
+order by time_to_deliver desc
+```
+
+<img width="520" height="320" alt="image" src="https://github.com/user-attachments/assets/f764d68b-5fe6-4ad1-97cb-6ad46e0d319b" />
+
+**Insights:** The time_to_deliver gives the actual time it took to deliver while the diff_estimated_delivery gives the estimated time it would take.  <br>
+**Recommendations:** In most of the cases there is a difference of around 20 days between these two columns, indicating there is a need to give a better estimate to the customer so as to keep expectations realistic and straightforward, thereby keeping transparency.
+
+
+### b. Find out the top 5 states with the highest & lowest average freight value.
+```sql
+select
+  s.seller_state,
+  avg(freight_value) as avg_freight_val
+from target.order_items oi
+left join target.sellers s
+on s.seller_id = oi.seller_id
+group by s.seller_state
+order by avg_freight_val desc
+limit 5
+```
+
+<img width="397" height="193" alt="image" src="https://github.com/user-attachments/assets/024c755f-893b-4676-b2a8-6eddd47db4bd" />
+**Insights:** This gives the list of the top 5 states with the highest average freight value. It indicates these states are incurring too many expenses in transporting the goods properly. So we must take initiative and formulate a plan to reduce this time period so that we can cut down on expenses. <br>
+**Recommendations:** Try having meetings with the transport department to know their schedule and plan accordingly so as to reduce the amount of time and money spent in transporting the goods.
+
+### c. Find out the top 5 states with the highest & lowest average delivery time.
+```sql
+with final_query as
+(
+select
+  c.customer_state,
+  timestamp_diff(o.order_delivered_customer_date, o.order_purchase_timestamp, day) as delivery_time
+from
+target.customers c left join
+target.orders o
+on c.customer_id = o.customer_id
+)
+select
+  final_query.customer_state,
+  avg(final_query.delivery_time) as avg_delivery_time
+from final_query
+group by final_query.customer_state
+order by avg_delivery_time
+limit 5;
+```
+
+<img width="397" height="193" alt="image" src="https://github.com/user-attachments/assets/4a3f73f0-3e65-4866-993f-3465c01e2e43" />
+
+**Insights:** Since these states have low average delivery time, they will also have more sales revenue. According to the analysis from Q3 part 2 SP, PR, and MG are also among the top 5 states with the highest number of customers which is a direct correlation here since lesser average delivery time means one can have a higher number of deliveries in a shorter time span leading to more popularity and preference here.
+
+Highest average delivery time
+
+```sql
+with final_query as
+(
+select
+  c.customer_state,
+  timestamp_diff(o.order_delivered_customer_date, o.order_purchase_timestamp, day) as delivery_time
+from
+target.customers c left join
+target.orders o
+on c.customer_id = o.customer_id
+)
+select
+  final_query.customer_state,
+  avg(final_query.delivery_time) as avg_delivery_time
+from final_query
+group by final_query.customer_state
+order by avg_delivery_time desc
+limit 5;
+```
+
+<img width="397" height="193" alt="image" src="https://github.com/user-attachments/assets/ebe32953-3584-4b39-870d-96438f428136" />
+
+**Insights:** Since these states have high average delivery time, they will also have less sales revenue. According to the analysis from Q3 part 2 RR, AP, and AM are also among the top 5 states with the lowest number of customers which is a direct correlation here since higher average delivery time means one can have a lesser number of deliveries in a longer time span leading to less popularity and preference among users. <br>
+**Recommendations:** Target must focus on reducing the delivery time for these states so that they can improve sales and gain more customers. 
+
+### d. Find out the top 5 states where the order delivery is really fast as compared to the estimated date of delivery. You can use the difference between the averages of actual & estimated delivery date to figure out how fast the delivery was for each state.
+```sql
+select
+  t.customer_state,
+  (t.actual_days - t.estimated_days) as gap
+from
+(
+with dc as
+(
+select
+  c.customer_state,
+  date_diff(o.order_delivered_customer_date, o.order_purchase_timestamp, day) as actual_num_of_days,
+  date_diff(o.order_delivered_customer_date, order_estimated_delivery_date, day) as estimated_delivery_days
+from target.customers c
+left join target.orders o
+on c.customer_id = o.customer_id
+)
+select
+  dc.customer_state,
+  avg(actual_num_of_days) as actual_days,
+  avg(estimated_delivery_days) as estimated_days
+from dc
+group by dc.customer_state
+) t
+order by (t.actual_days - t.estimated_days) 
+limit 5;
+```
+
+<img width="397" height="193" alt="image" src="https://github.com/user-attachments/assets/e9e86a26-8844-4f3b-a797-86b5ab9f84d5" />
+
+**Insights:** Lesser the gap, faster the delivery.
+These are the states where the order delivery is really fast as compared to the estimated date of delivery. <br>
+**Recommendations:** The company should focus on reducing the gap between estimated date of arrival and actual date of arrival to improve customer experience and also keep track of the products being sent.
+
